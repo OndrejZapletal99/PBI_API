@@ -226,3 +226,21 @@ class PBIManager():
         print(f'✅ Documentation saved at: {file_path}')
 
 
+    def refresh_dataset(self, workspace_id: str, dataset_id: str):
+        """
+        Triggers a refresh for a specific dataset in Power BI.
+        """
+        if self.access_token is None:
+            raise Exception('❌ No access token, call "get_token()"')
+        
+        url = f"https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets/{dataset_id}/refreshes"
+        headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/json"
+        }
+        response = requests.post(url, headers=headers)
+        
+        if response.status_code == 202:
+            print(f'✅ Refresh started for dataset: {dataset_id}')
+        else:
+            raise Exception(f"❌ Error: {response.status_code} - {response.text}")
